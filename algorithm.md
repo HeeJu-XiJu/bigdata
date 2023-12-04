@@ -154,3 +154,166 @@ for i in range(n):
 
 
 ## 4. 바이너리 인덱스 트리
+- 바이너리 인덱스 트리(펜윅트리) : 2진법 인덱스 구조를 활용해 구간 합 문제를 효과적으로 해결할 수 있는 자료구조
+ex)
+7 = 00000000 0000111
+-7 = 11111111 1111001 (7에서 1로 모두 전환 후 1을 더한 값)
+
+- 0이 아닌 마지막 비트를 찾는 방법
+: 특정한 숫자 K의 0이 아닌 마지막 비트를 찾기 위해서는 K & -K를 계산하면 됨
+
+```python
+n = 8
+
+for i in range(n+1):
+    print(i, '의 마지막 비트:', (i & -i))
+
+# 0의 마지막 비트 : 0
+# 1의 마지막 비트 : 1
+# 2의 마지막 비트 : 2
+# 3의 마지막 비트 : 1
+# 4의 마지막 비트 : 4
+# 5의 마지막 비트 : 1
+# 6의 마지막 비트 : 2
+# 7의 마지막 비트 : 1
+# 8의 마지막 비트 : 8
+```
+
+- 트리구조 만들기 : 0이 아닌 마지막 비트 = 내가 저장하고 있는 값들의 개수
+- 특정값을 변경할 때 : 0이 아닌 마지막비트만큼 더하면서 구간들의 값을 변경 (예시 3)
+![Alt text](/reference_algorithm/image-12.png)
+
+- 1부터 N까지의 합(누적 합) 구하기 : 0이 아닌 마지막 비트만큼 빼면서 구간들의 값의 합 계산
+![Alt text](/reference_algorithm/image-13.png)
+
+```python
+import sys
+input = sys.stdin.readline
+
+# 데이터의 개수(n), 변경 횟수(m), 구간 합 계산 횟수(k)
+n, m, k = map(int, input().split())
+
+# 전체 데이터의 개수는 최대 1,000,000개
+arr = [0] * (n+1)
+tree = [0] * (n+1)
+
+# i번째 수까지의 누적 합을 계산하는 함수
+def prefix_sum(i):
+    result = 0
+    while i > 0:
+        result += tree[i]
+        # 0이 아닌 마지막 비트만큼 빼가면서 이동
+        i -= (i&-i)
+        return result
+
+# i번째 수를 dif만큼 더하는 함수
+def update(i, dif):
+    while i <= n:
+        tree[i] += dif
+        i += (i&-i)
+    return i
+
+# start부터 end까지의 구간 합을 계산하는 함수
+def interval_sum(start, end):
+    return prefix_sum(end) - prefix_sum(start-1)
+
+for i in range(1, n+1):
+    x = int(input())
+    arr[i] = x
+    update(i, x)
+
+for i in range(m+k):
+    a, b, c = map(int, input().split())
+    # 업데이트(update) 연산인 경우
+    if a == 1:
+        update(b, c-arr[b]) # 바뀐 크기(dif)만큼 적용
+        arr[b] = c
+    # 구간 합(interval sum) 연산인 경우
+    else:
+        print(interval_sum(b, c))
+```
+
+
+## 5. 선텍정렬과 삽입정렬
+- 정렬(Sorting) : 데이터를 특정한 기준에 따라 순서대로 나열
+
+#### 선택 정렬
+- 처리되지 않은 데이터 중에서 가장 작은 데이터를 선택해 맨 앞에 있는 데이터와 바꾸는 것을 반복
+```python
+array = [7, 5, 9, 0, 3, 1, 6, 2, 4, 8]
+
+for i in range(len(array)):
+    min_index = i # 가장 작은 원소의 인덱스
+    for j in range(i+1, len(array)):
+        if array[min_index] > array[j] :
+            min_index = j
+    array[i], array[min_index] = array[min_index], array[i]
+
+print(array) # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+#### 삽입 정렬
+- 처리되지 않은 데이터를 하나씩 골라 적절한 위치에 삽입
+```python
+array = [7, 5, 9, 0, 3, 1, 6, 2, 4, 8]
+
+for i in range(1, len(array)):
+    for j in range(i, 0, -1): # 인덱스 i부터 1까지 1씩 감소하며 반복하는 문법
+        if array[j] < array[j-1]:
+            array[j], array[j-1] = array[j-1], array[j]
+        else: # 자기보다 작은 데이터를 만나면 그 위치에서 멈춤
+            break
+
+print(array) # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] 
+```
+
+
+## 6. 퀵 정렬과 계수 정렬
+#### 퀵정렬
+- 기준 데이터를 설정하고 그 기준보다 큰 데이터와 작은 데이터의 위치를 바꾸는 방법
+- 일반적으로 기준값(pivot)은 첫번째 데이터로 함
+```python
+array = [5, 7, 9, 0, 3, 1, 6, 2, 4, 8]
+
+def quick_sort(array, start, end):
+    if start >= end: # 원소과 1개인 경우 종료
+        return
+    pivot = start
+    left = start + 1
+    right = end
+    while(left <= right):
+        # 피벗보다 큰 데이터를 찾을 때까지 반복
+        while (left <= end and array[left] <= array[pivot]):
+            left += 1
+        # 피벗보다 작은 데이터를 찾을 때까지 반복
+        while (right > start and array[right] >= array[pivot]):
+            right -= 1
+        if(left > right): # 엇갈렸다면 작은 데이터와 피벗을 교체
+            array[right], array[pivot] = array[pivot], array[right]
+        else: # 엇갈리지 않았다면 작은 데이터와 큰 데이터를 교체
+            array[left], array[right] = array[right], array[left]
+    # 분할 이후 왼쪽 부분과 오른쪽 부분에서 각각 정렬 수행
+    quick_sort(array, start, right-1)
+    quick_sort(array, right+1, end)
+quick_sort(array, 0, len(array)-1)
+
+print(array) # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+```python
+array = [5, 7, 9, 0, 3, 1, 6, 2, 4, 8]
+
+def quick_sort(array):
+    if len(array) <= 1:
+        return array
+    pivot = array[0] # 피벗은 첫번재 원소
+    tail = array[1:]
+
+    left_side = [x for x in tail if x <= pivot] # 분할된 왼쪽 부분
+    right_side = [x for x in tail if x > pivot] # 분할된 오른쪽 부분
+
+    # 분할 이후 왼쪽 부분과 오른쪽 부분에서 각각 정렬 수행하고 전체 리스트 반환
+    return quick_sort(left_side) + [pivot] + quick_sort(right_side)
+
+print(quick_sort(array)) # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
