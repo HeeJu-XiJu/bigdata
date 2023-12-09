@@ -317,3 +317,19 @@ def quick_sort(array):
 
 print(quick_sort(array)) # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 ```
+
+#### 계수정렬
+- 동일한 값을 가지는 데이터가 여러 개 등장할 때 효과적으로 사용
+- 데이터가 0, 999,999인 2개의 값만 있다고 했을 때 매우 비효율적
+
+```python
+array = [7, 5, 9, 0, 3, 1, 6, 2, 9, 1, 4, 8, 0, 5, 2]
+count = [0] * (max(array) + 1)
+
+for i in range(len(array)):
+    count[array[i]] += 1
+
+for i in range(len(count)):
+    for j in range(count[i]):
+        print(i, end=' ')
+```
