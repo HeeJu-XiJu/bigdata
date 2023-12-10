@@ -419,3 +419,413 @@ bfs(graph, 1, visited)
 4. 해당 노드를 거쳐 다른 노드로 가는 비용을 계산하여 최단거리테이블 갱신
 5. 위 과정에서 3번과 4번을 반복
 
+### 우선순위 큐
+- 우선순위가 가장 높은 데이터를 가장 먼저 삭제
+#### 힙
+```python
+# 최소 힙
+import heapq
+
+def heapsort(iterable):
+    h = []
+    result = []
+    for value in iterable:
+        heapq.heappush(h, value)
+
+    for i in range(len(h)):
+        result.append(heapq.heappop(h))
+    return result
+
+result = heapsort([1, 3, 5, 7, 9, 2, 4, 6, 8, 0])
+print(result) # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+```python
+# 최대 힙
+import heapq
+
+def heapsort(iterable):
+    h = []
+    result = []
+    for value in iterable:
+        heapq.heappush(h, -value)
+
+    for i in range(len(h)):
+        result.append(-heapq.heappop(h))
+    return result
+
+result = heapsort([1, 3, 5, 7, 9, 2, 4, 6, 8, 0])
+print(result) # [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+```
+
+
+## 9. 벨만 포드 알고리즘
+1. 출발 노드 설정
+2. 최단거리 테이블 초기화
+3. N-1번 반복
+    1. 전체 간선 E개를 하나씩 확인
+    2. 각 간선을 거쳐 다른 노드로 가는 비용을 계산하여 최단 거리 테이블 갱신
+
+음수 간선 순환이 발생하는지 체크하고 싶다면 3번의 과정을 한번더 수행\
+이 때, 최단 거리 테이블이 갱신된다면 음수 간선 순환이 존재
+
+```python
+import sys
+input - sys.stdin.readline
+INF = int(1e9)
+
+def bf(start):
+    dist[start] = 0
+    for i in range(n):
+        for j in range(m):
+            cur = edges[j][0]
+            next_node = edges[j][1]
+            cost = edges[j][2]
+            if dist[cur] != INF and dist[next_node] > dist[cur] + cost:
+                dist[next_node] = dist[cur] + cost
+                if i == n-1 :
+                    return True
+    return False
+
+n, m = map(int, input().split())
+edges = []
+dist = [INF] * (n+1)
+for _ in range(m):
+    a, b, c = map(int, input().split())
+    edges.append((a, b, c))
+
+negative_cycle = bf(1)
+
+if negative_cycle:
+    print('-1')
+else:
+    for i in range(2, n+1):
+        if dist[i] == INF:
+            print('-1')
+        else:
+            print(dist[i])
+```
+
+
+- 다익스트라 알고리즘 : \
+매번 방문하지 않은 노드 중에서 최단 거리가 가장 짧은 노드 선택\
+음수 간선이 없다면 최적의 해를 찾을 수 있음(아래와 같은 경우 음수간선 무한루프 발생)
+![Alt text](reference_algorithm/image-19.png)
+- 벨만 포드 알고리즘 : \
+매번 모든 간선을 전부 확인(다익스트라 알고리즘에서의 최적의 해를 항상 포함) \
+다익스트라 알고리즘에 비해 시간이 오래 걸리지만 음수 간선 순환을 탐지 가능
+
+
+## 10. 유니온 파인드 자료 구조
+- 서로소 집합(Union Find) : 공통 원소가 없는 두 집합
+    - 합집합(Union) : 두 개의 원소가 포함된 집합을 하나의 집합으로 합치는 연산
+    - 찾기(Find) : 특정한 원소가 속한 집합이 어떤 집합인지 알려주는 연산
+
+- 여러 개의 합치기 연산이 주어졌을 때
+1. 합집합연산을 확인하여 서로 연결된 두 노드 A, B를 확인
+    1. A와 B의 루트 노드 A', B'를 각각 찾음
+    2. A'를 B'의 부모 노드로 설정
+2. 모든 합집합 연산을 처리할 때까지 1번 과정 반복
+![Alt text](reference_algorithm/image-16.png)
+
+```python
+def find_parent(parent, x):
+    if parent[x] != x:
+        return find_parent(parent, parent[x])
+    return x
+
+def union_parent(parent, a, b):
+    a = find_parent(parent, a)
+    b = find_parent(parent, b)
+    if a < b:
+        parent[b] = a
+    else:
+        parent[a] = b
+
+v, e = map(int, input().split())
+parent = [0] * (v+1)
+
+for i in range(1, v+1):
+    parent[i] = i
+
+for i in range(e):
+    a, b = map(int, input().split())
+    union_parent(parent, a, b)
+
+print('각 원소가 속한 집합: ', end='')
+for i in range(1, v+1):
+    print(find_parent(parent, i), end= ' ')
+
+print()
+
+print('부모 테이블: ', end='')
+for i in range(1, v+1):
+    print(parent[i], end=' ')
+```
+
+- 문제점: 합집합 연산이 편향되게 이루어지는 경우 찾기 함수가 비효율적으로 동작\
+-> 이를 최적화하기 위한 방법으로 경로압축 이용
+![Alt text](reference_algorithm/image-17.png)
+![Alt text](reference_algorithm/image-18.png)
+
+```python
+def find_parent(parent, x):
+    if parent[x] != x:
+        parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+```
+
+#### 사이클 판별
+- 서로소집합은 무방향 그래프 내에서의 사이클을 판별할 때 사용가능
+    - 이때 방향 그래프에서의 사이클 여부는 DFS를 이용하여 판별 가능
+1. 각 간선을 하나씩 확인하며 두 노드의 루트 노드를 확인
+    1. 루트 노드가 서로 다르다면 두 노드에 대해 합집합 연산 수행
+    2. 루트 노드가 서로 같다면 사이클 발생
+2. 그래프에 포함되어 있는 모든 간선에 대해 1번 과정 반복
+
+```python
+def find_parent(parent, x):
+    if parent[x] != x:
+        return find_parent(parent, parent[x])
+    return x
+
+def union_parent(parent, a, b):
+    a = find_parent(parent, a)
+    b = find_parent(parent, b)
+    if a < b:
+        parent[b] = a
+    else:
+        parent[a] = b
+
+v, e = map(int, input().split())
+parent = [0] * (v+1)
+
+for i in range(1, v+1):
+    parent[i] = i
+
+for i in range(e):
+    a, b = map(int, input().split())
+    if find_parent(parent, a) == find_parent(parent, b):
+        cycle = True
+        break
+    else:
+        union_parent(parent, a, b)
+if cycle:
+    print('사이클이 발생했습니다.')
+
+else:
+    print('사이클이 발생하지 않았습니다.')
+```
+
+## 11. 크루스칼 알고리즘
+- 신장트리 : 그래프에서 모든 노드를 포함하면서 사이클이 존재하지 않는 부분 그래프
+    - 트리조건 : 모든 노드가 포함되어 서로 연결되면서 사이클이 존재하지 않음
+
+![Alt text](reference_algorithm/image-20.png)
+
+
+1. 간선 데이터를 비용에 따라 오름차순으로 정렬
+2. 간선을 하나씩 확인하며 현재의 간선이 사이클을 발생시키는지 확인
+    1. 사이클이 발생하지 않는 경우 최소 신장 트리에 포함
+    2. 사이클이 발생하는 경우 최소 신장 트리에 포함시키지 않음
+3. 모든 간선에 대해 2번의 과정 반복
+
+```python
+def find_parent(parent, x):
+    if parent[x] != x:
+        return find_parent(parent, parent[x])
+    return x
+
+def union_parent(parent, a, b):
+    a = find_parent(parent, a)
+    b = find_parent(parent, b)
+    if a < b:
+        parent[b] = a
+    else:
+        parent[a] = b
+
+v, e = map(int, input().split())
+parent = [0] * (v+1)
+
+edges = []
+result = 0
+
+for i in range(1, v+1):
+    parent[i] = i
+
+for _ in range(e):
+    a, b, cost = map(int, input().split())
+    edges.append((cost, a, b))
+
+edges.sort()
+
+for edge in edges:
+    cost, a, b = edge
+    if find_parent(parent, a) != find_parent(parent, b):
+        union_parent(parent, a, b)
+        result += cost
+
+print(result)
+```
+
+
+## 12. 최소 공통 조상
+1. 모든 노드에 대한 깊이 계산
+2. 최소 공통 조상을 찾을 두 노드를 확인
+    1. 먼저 두 노드의 깊이가 동일하도록 거슬러 올라감
+    2. 이후에 부모가 같아질 때까지 반복적으로 두 노드의 부모방향으로 거슬러 올라감
+3. 모든 LCA 연산에 대하여 2번의 과정을 반복
+
+```python
+import sys
+sys.setrecursionlimit(int(1e5))
+n = int(input())
+
+parent = [0] * (n+1)
+d = [0] * (n+1)
+c = [0] * (n+1)
+graph = [[] for _ in range(n+1)]
+
+for _ in range(n-1):
+    a, b = map(int, input().split())
+    graph[a].append(b)
+    graph[b].append(a)
+
+def dfs(x, depth):
+    c[x] = True
+    d[x] = depth
+    for y in graph[x]:
+        if c[y]:
+            continue
+        parent[y] = x
+        dfs(y, depth+1)
+
+def lca(a, b):
+    while d[a] != d[b]:
+        if d[a] > d[b]:
+            a = parent[a]
+        else:
+            b = parent[b]
+    while a != b:
+        a = parent[a]
+        b = parent[b]
+    return a
+
+dfs(1, 0)
+
+m = int(input())
+
+for i in range(m):
+    a, b = map(int, input().split())
+    print(lca(a, b))
+```
+
+- 시간복잡도 개선을 위하여 부모 관계를 설정할 때 2^i씩 거슬러 올라감
+```python
+import sys
+input = sys.stdin.readline
+sys.setrecursionlimit(int(1e5))
+LOG = 21
+
+n = int(input())
+parent = [[0] * LOG for _ in range(n+1)]
+d = [0] * (n+1)
+c = [0] * (n+1)
+graph = [[] for _ in range(n+1)]
+
+for _ in range(n-1):
+    a, b = map(int, input().split())
+    graph[a].append(b)
+    graph[b].append(a)
+
+def dfs(x, depth):
+    c[x] = True
+    d[x] = depth
+    for y in graph[x]:
+        if c[y]:
+            continue
+        parent[y] = x
+        dfs(y, depth+1)
+
+def set_parent():
+    dfs(1, 0)
+    for i in range(1, LOG):
+        for j in range(1, n+1):
+            parent[j][i] = parent[parent[j][i-1]][i-1]
+
+def lca(a, b):
+    if d[a] > d[b]:
+        a, b = b, a
+    for i in range(LOG-1, -1, -1):
+        if d[b] - d[a] >= (1 << i):
+            b = parent[b][i]
+    if a == b:
+        return a
+    for i in range(LOG-1, -1, -1):
+        if parent[a][i] != parent[b][i]:
+            a = parent[a][i]
+            b = parent[b][i]
+    return parent[a][0]
+    
+set_parent()
+
+m = int(input())
+
+for i in range(m):
+    a, b = map(int, input().split())
+    print(lca(a, b))
+```
+
+
+## 13. 위상 정렬
+- 진입차수 : 특정한 노드로 들어오는 간선의 개수
+- 진출차수 : 특정한 노드에서 나가는 간선의 개수
+![Alt text](/reference_algorithm/image-21.png)
+
+- 사이클이 없는 방향 그래프의 모든 노드를 방향성에 거스르지 않도록 순서대로 나열
+
+1. 진입차수가 0인 모든 노드를 큐에 넣음
+2. 큐가 빌 때까지 다음의 과정 반복
+    1. 큐에서 원소를 꺼내 해당 노드에서 나가는 간선을 그래프에서 제거
+    2. 새롭게 진입차수가 0이 된 노드를 큐에 넣음
+
+- 위상 정렬은 DAG에 대해서만 수행
+    - DAG : 순환하지 않는 방향 그래프
+- 위상 정렬에서는 여러가지 답이 존재할 수 있음
+- 모든 원소를 방문하기 전에 큐가 빈다면 사이클이 존재한다고 판단가능
+- 스택을 활용한 DFS를 이용해 위상 정렬 수행 가능
+
+```python
+from collections import deque
+
+v, e = map(int, input().split())
+indegree = [0] * (v+1)
+graph = [[] for i in range(v+1)]
+
+for _ in range(e):
+    a, b = map(int, input().split())
+    graph[a].append(b)
+    indegree[b] + =1
+
+def topology_sort():
+    result = []
+    q = deque()
+
+    for i in range(1, v+1):
+        if indegree[i] == 0:
+            q.append(i)
+    
+    while q:
+        now = q.popleft()
+        result.append(now)
+
+        for i in graph[now]:
+            indegree[i] -= 1
+            if indegree[i] == 0:
+                q.append(i)
+    
+    for i in result:
+        print(i, end=' ')
+
+topology_sort()
+```
