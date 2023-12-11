@@ -829,3 +829,283 @@ def topology_sort():
 
 topology_sort()
 ```
+
+
+## 14. 재귀함수
+- 자기 자신을 다시 호출하는 함수
+
+- 최대공약수 계산(유클리드 호제법)
+    - 유클리드 호제법 : 두 자연수 A, B(A > B)에 대하여 A를 B로 나눈 나머지 R이 있을 때, A와 B의 최대공약수는 B와 R의 최대공약수와 같다.
+
+```python 
+def gcd(a, b):
+    if a % b == 0:
+        return b
+    else:
+        return gcb(b, a % b)
+
+print(gcd(192, 162)) # 6
+```
+
+
+## 15. 유용한 표준 라이브러리 소개
+- itertools : 반복되는 형태의 데이터를 처리하기 위한 기능 제공
+    - 순열, 조합
+- heapq : 힙 자료구조 제공
+- bisect : 이진 탐색 기능 제공
+- collections : 덱, 카운터 등의 자료구조 포함
+- math : 수학적 기능 제공
+    - 팩토리얼, 제곱근, 최대공약수(GCD), 삼각함수 관련 함수부터 파이와 같은 상수 포함
+
+
+```python
+# sum()
+result = sum([1, 2, 3, 4, 5]) # 15
+
+
+# min(), max()
+min_result = min(7, 3, 5, 2) # 2
+max_result = min(7, 3, 5, 2) # 7
+
+
+# eval()
+result = eval('(3+5)*7') # 56
+
+
+# sorted()
+result = sorted([9, 1, 8, 5, 4]) # [1, 4, 5, 8, 9]
+rever_result = sorted([9, 1, 8, 5, 4], reverse=True) # [9, 8, 5, 4, 1]
+
+
+# sorted() with key
+array = [('홍길동', 35), ('이순신', 75), ('아무개', 50)]
+result = sorted(array, key=lambda x: x[1], reverse=True) # [('이순신', 75), ('아무개', 50), ('홍길동', 35)]
+
+
+# 순열
+from itertools import permutations
+data = ['A', 'B', 'C']
+result = list(permutations(data, 3)) #[('A, 'B' 'C'), ('A', 'C', 'B'), ('B', 'A', 'C'), ('B', 'C', 'A'), ('C', 'A', 'B'), ('C', 'B', 'A')]
+
+
+# 조합
+from itertools import combinations
+data = ['A', 'B', 'C']
+result = list(combinations(data, 2)) # [('A', 'B'), ('A', 'C'), ('B', 'C')]
+
+
+# 중복 순열
+from itertools import product
+data = ['A', 'B', 'C']
+result = list(product(data, repeat=2)) # 2개를 뽑는 모든 순열(중복 허용)
+# [('A', 'A'), ('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'B'), ('B', 'C'), ('C', 'A'), ('C', 'B'), ('C', 'C')]
+
+
+# 중복 조합
+from itertools import combinations_with_replacement
+data = ['A', 'B', 'C']
+result = list(combinations_with_replacement(data, 2)) # 2개를 뽑는 모든 조합(중복 허용))
+# [('A', 'A'), ('A', 'B'), ('A', 'C'), ('B', 'B'), ('B', 'C'), ('C', 'C')]
+
+
+# counter
+from collections import Counter
+counter = Counter(['red', 'blue', 'red', 'green', 'blue', 'blue'])
+
+print(counter['blue']) # 3
+print(dict(counter)) # {'red':2, 'blue':3, 'green':1}
+
+
+# 최대공약수와 최소공배수
+import math
+def lcm(a, b):
+    return a * b // math.gcd(a, b)
+
+print(math.gcd(21, 14)) # 7
+print(lcm(21, 14)) # 42
+```
+
+
+## 16. 소수 관련 알고리즘
+- 소수 : 1보다 큰 자연수 중에서 1과 자기자신을 제외한 자연수로 나누어 떨어지지 않는 자연수
+
+```python
+def is_prime_number(x):
+    for i in range(2, x):
+        if x % i == 0:
+            return False
+    return True
+
+print(is_prime_number(7)) # True
+```
+
+#### 약수의 성질
+- 모든 약수가 가운데 약수를 기준으로 곱셈 연산에 대한 대칭을 이룸
+    - 예)
+    16의 약수는 1, 2, 4, 8, 16\
+    이때 2 X 8 = 16 과 8 X 2 = 16은 대칭
+- 따라서 특정한 자연수의 모든 약수를 찾을 때 가운데 약수(제곱근)까지만 확인하면 됨
+
+```python
+import math
+
+def is_prime_number(x):
+    for i in range(2, int(math.sqrt(x)) + 1):
+        if x % i == 0:
+            return False
+    return True
+
+print(is_prime_number(7)) # True
+```
+
+#### 특정한 수의 범위 안에 존재하는 모든 소수를 찾아야 할 때
+- 에라토스테네스의 체 알고리즘 사용
+    1. 2부터 N까지의 모든 자연수 나열
+    2. 남은 수 중에서 아직 처리하지 않은 가장 작은 수 i를 찾음
+    3. 남은 수 중에서 i의 배수를 모두 제거 (i는 소수이므로 제거하지 않음)
+    4. 더 이상 반복할 수 없을 때까지 2번과 3번의 과정 반복
+
+```python
+import math
+
+n = 1000
+array = [True for i in range(n+1)]
+
+for i in range(2, int(math.sqrt(n)) + 1):
+    if array[i] == true:
+        j = 2
+        while i * j <= n:
+            array[i * j] = False
+            j += 1
+for i in range(2, n+1):
+    if array[i]:
+        print(i, end=' ') 
+```
+
+
+## 17. 이진 탐색
+- 순차 탐색 : 리스트 안에 있는 특정한 데이터를 찾기 위해 앞에서부터 데이터를 하나씩 확인
+- 이진 탐색 : 정렬되어 있는 리스트에서 탐색 범위를 절반씩 좁혀가며 데이터를 탐색
+    - 시작점, 끝점, 중간점을 이용하여 탐색 범위를 설정
+
+```python
+def binary_search(array, target, start, end):
+    if start > end:
+        return None
+    mid = (start + end) // 2
+
+    if array[mid] == traget:
+        return mid
+    elif array[mid] > target:
+        return binary_search(array, target, start, mid-1)
+    else:
+        return binary_search(array, target, mid+1, end)
+
+n, target = list(map(int, input().split()))
+array = list(map(int, input().split()))
+
+result = binary_search(array, target, 0, n-1)
+if result == None:
+    print('원소가 존재하지 않습니다.')
+else:
+    print(result+1)
+
+input(10 7)
+input(1, 3, 5, 7, 9, 11, 13, 15, 17, 19)
+print(result) # 4
+```
+
+- 파이썬 이진탐색 라이브러리
+    - bisect_left(a, x) : 정렬된 순서를 유지하면서 배열 a에 x를 삽입할 가장 왼쪽 인덱스 반환
+    - bisect_right(a, x) : 정렬된 순서를 유지하면서 배열 a에 x를 삽입할 가장 오른쪽 인덱스 반환
+
+```python
+from bisect import bisect_left, bisect_right
+
+a = [1, 2, 4, 4, 8]
+x = 4
+
+print(bisect_left(a, x)) # 2
+print(bisect_right(a, x)) # 4
+```
+
+```python
+# 값이 특정 범위에 속하는 데이터 개수 구하기
+from bisect import bisect_left, bisect_right
+
+def count_by_range(a, left_value, right_value):
+    right_index = bisect_right(a, right_value)
+    left_index = bisect_left(a, left_value)
+    return right_index - left_index
+
+a = [1, 2, 3, 3, 3, 3, 4, 4, 8, 9]
+
+# 값이 4인 데이터 개수 출력
+print(count_by_range(a, 4, 4)) # 2
+# 값이 [-1, 3]범위에 있는 데이터 개수 출력
+print(count_by_range(a, -1, 3)) # 6
+```
+
+
+## 18. 동적계획법
+- 동적계획법(다이나믹 프로그래밍) : 메모리를 적절히 사용하여 수행 시간 효율성을 향상시키는 방법\
+다음의 조건을 만족할 때 사용 가능
+    - 최적부분구조 : 큰 문제를 작은 문제로 나눌 수 있으며 작은 문제의 답을 모아서 큰 문제를 해결할 수 있음
+    - 중복되는 부분 문제 : 동일한 작은 문제를 반복적으로 해결해야 함
+
+#### 피보나치 수열
+a_n = a_(n-1) + a_(n-2)
+![Alt text](/reference_algorithm/image-22.png)
+
+``` python
+def fibo(x):
+    if x == 1 or x == 2:
+        return 1
+    return fibo(x-1) + fibo(x-2)
+
+print(fibo(4)) # 3
+```
+
+피보나치수열은 다이나믹 프로그래밍 사용조건(최적부분구조, 중복되는 부분 문제)을 만족
+![Alt text](/reference_algorithm/image-23.png)
+
+```python
+# 탑다운 다이나믹 프로그래밍
+d = [0] * 100
+
+def fibo(x):
+    if x == 1 or x == 2:
+        return 1
+    if d[x] != 0:
+        return d[x]
+    d[x] = fibo(x-1) + fibo(x-2)
+    return d[x]
+
+print(fibo(99)) # 218922995834555169026
+```
+
+```python
+# 보텀업 다이나믹 프로그래밍
+d = [0] * 100
+
+d[1] = 1
+d[2] = 1
+n = 99
+
+for i in range(3, n+1):
+    d[i] = d[i-1] + d[i-2]
+
+print(d[n]) # 218922995834555169026
+```
+
+
+## 19. 기타 알고리즘
+- 그리디(탐욕법) : 현재 상황에서 지금 당장 좋은 것만 고르는 방법
+    - 정당성을 판단하는게 중요
+
+- 투 포인터 : 리스트에 순차적으로 접근해야 할 때 두 개의 점(시작점, 끝점)의 위치를 기록하면서 처리
+    - 예) 2, 3, 4, 5, 6, 7번 학생을 지목해야 할 때 2번부터 7번까지의 학생이라고 칭함
+
+- 구간합 : 연속적으로 나열된 N개의 수가 있을 때 특정 구간의 모든 수를 합한 값을 계산
+    - 접두사 합 : 배열의 맨 앞부터 특정 위치까지의 합을 미리 구해 놓은 것
+![Alt text](/reference_algorithm/image-24.png)
