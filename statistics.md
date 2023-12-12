@@ -102,3 +102,129 @@ f(xi) = P[X = xi], i = 1, 2, ..., n
 ![Alt text](/reference_statistics/image-13.png)
 - 표준편차 : 분산의 제곱근(단위가 보정됨)
 ![Alt text](/reference_statistics/image-14.png)
+
+
+## 4. 이항분포, 포아송분포, 지수분포, 감마분포
+#### 이항분포
+- 베르누이시행 : 아래 두 가지 조건을 만족하는 실험
+    - 매 시행마다 '성공' 또는 '실패'의 두 가지 결과만 가짐
+    - '성공'의 확률이 p로 일정\
+예) 동전 실험
+- 이항 확률변수가 고려되는 실험 : 베르누이시행을 독립적으로 n번 반복하는 실험
+    - X : n번 시행 중 '성공'의 횟수로 정의
+    - 이항확률 변수 x = 0, 1, ..., n의 값을 가짐
+    - ![Alt text](/reference_statistics/image-15.png)
+    - 이 경우 X~Bin[n, p]
+![Alt text](/reference_statistics/image-16.png)
+
+- 이항분포의 특성치\
+: X~Bin[n, p]일 때,
+    - 기대값(평균값) E[X] = np
+    - 분산 V[X] = np(1-p)
+
+#### 포아송 분포
+- 단위시간(t=1), 포아송확률과정을 따르는 사건 A가 발생하는 횟수 X일 때\
+f(x) = P(X = x) = exp(-m) * m^x / x! (x = 0, 1, 2, ...)
+- 이 경우 X~POI[m]
+
+- 포아송 분포의 특성치
+    - X~POI[m]인 경우 : E[X] = V[X] = m
+
+    
+예) 하루 평균 고속도로 교통사고 발생 2건 일 때 하루 3건일 확률\
+X~POI[2]이고 P[X = 3] = 위의 식 활용
+
+#### 지수분포
+- 단위구간에서 평균발생횟수가 m인 포아송 확률과정을 따르는 사건 A가 한번 일어난 뒤 그 다음 또 일어날 때까지 걸리는 시간 W로 정의
+![Alt text](/reference_statistics/image-17.png)
+X~EXP[람다]
+- 지수분포의 특성치
+    - 포아송모수와 지수모수는 역의 관계 : 단위구간 내 평균발생횟수가 m인 포아송과정을 따르는 사건은 사건 사이 소요시간의 평균이 람다 = 1/m
+
+#### 감마분포
+- 감마확률변수 X의 확률밀도함수는 양수인 세타와 k에 대해
+![Alt text](/reference_statistics/image-18.png)
+이 경우 X~GAMMA[k, 세타]
+    - 감마분포의 특성치\
+        - X~GAMMA[k, 세타]인 경우\
+        E[X] = k*세타\
+        V[X] = k * 세타^2
+
+
+## 5. 정규분포, 표준정규분포
+#### 정규분포
+- 확률변수 X가 평균이 u, 분산이 시그마^2 이고, 다음의 확률밀도함수를 가질 때 X는 정규분포를 따름
+![Alt text](/reference_statistics/image-19.png)
+이 경우 X~N [u, 시그마^2]
+![Alt text](/reference_statistics/image-20.png)
+
+    - u는 분포의 중심
+    - u를 중심으로 대칭이고 u에서 가장 큰 값이 되는 하나의 봉우리만 가짐
+    - 시그마^2이 크면 분포의 산포가 커짐
+
+- 정규분포의 특성치\
+X~N[u, 시그마^2]인 경우
+    - E[X] = u
+    - V[X] = 시그마^2
+
+#### 표준정규분포
+- X~N[u, 시그마^2]일 때, 정규분포의 선형불변성에 의해 Z = (X-u) / 시그마 ~N[0, 1]이 되며, 이 때 평균이 0, 분산이 1인 정규분포
+![Alt text](/reference_statistics/image-21.png)
+
+- 표준정규 확률변수의 (1 - a)분위수 : Z_a\
+Z~N[0, 1]일 때 P[Z < c] = 1 - a 를 만족하는 Z의 (1-a)분위수 c를 Z_a로 표기
+![Alt text](/reference_statistics/image-22.png)
+
+
+## 6. 카이제곱분포, t분포, f분포
+#### 카이제곱분포 : 표준정규들의 제곱합이 가지는 분포
+- Z1, Z2, ..., Zk가 k개의 서로 독립인 표준정규 확률변수(Zi~N[0, 1], i=1, 2, ..., k)라고 할 때,\
+X = Z1^2 + Z2^2 + ... + Zk^2가 따르는 분포를 자유도가 k인 카이제곱분포라고 정의
+![Alt text](/reference_statistics/image-23.png)
+이 경우 X~x^2[k]
+
+- 카이제곱분포의 특성치:\
+X~x^2[k]인 경우
+    - E[X] = k
+    - V[X] = 2k
+    ![Alt text](/reference_statistics/image-24.png)
+
+- 카이제곱 확률변수의 (1-a)의 분위수 : x^2_a, k\
+X~x^2[k]일 때, P[X > c] = a를 만족하는 X의 (1-a)분위수 c
+![Alt text](/reference_statistics/image-25.png)
+
+
+#### t분포 : 표준정규에 평균이 가지는 분포
+- Z가 표준정규확률변수 Z~N[0, 1]일 때, U가 자유도가 k인 카이제곱확률변수 U~x^2[k]이며, Z와 X는 서로 독립이라고 할 때 X = Z / 루트(U/k) 가 따르는 분포를 자유도가 k인 t분포라고 정의
+![Alt text](/reference_statistics/image-26.png)
+![Alt text](/reference_statistics/image-27.png)
+
+- t분포의 특성치\
+X~t[k]인 경우
+    - E[X] = 0
+    - V[X] = k / k-2 (단 k > 2)
+
+- t분포 확률밀도함수 개형
+X~t[k]인 경우
+    - 가운데 0을 중심으로 대칭인 종모양의 분포
+    - 표준정규분포보다 꼬리가 두꺼움
+    - 자유도 k가 커짐에 따라 산포가 줄어들어 표준정규분포로 수렴
+
+- t확률변수의 (1-a)분위수 : t_a,k
+X~t[k]일 때, P[X > c] = a를 만족하는 X의 (1-a)분위수 c
+![Alt text](/reference_statistics/image-28.png)
+
+#### f분포 : 2개의 카이제곱분포의 비율이 만들어내는 분포
+- U가 자유도가 k1인 카이제곱 확률변수 U~x^2[k1]이며 V가 자유도가 k2인 카이제곱 확률변수 V~x^2[k2]이고 U와 V는 서로 독립이라고 할 때 X = (U/k1) / (V/k2)가 따르는 분포를 자유도가 k1, k2인 F분포
+![Alt text](/reference_statistics/image-29.png)
+X~F[k1, k2]라고 함
+
+- F분포의 특성치\
+X~F[k1, k2]인 경우
+![Alt text](/reference_statistics/image-30.png)
+![Alt text](/reference_statistics/image-31.png)
+
+- F 확률변수의 (1-a)분위수 : F_a,k1,k2\
+X~F[k1, k2]일 때, P[X > c] = a를 만족하는 X의 (1-a)분위수 c
+![Alt text](/reference_statistics/image-32.png)
+
