@@ -1,3 +1,4 @@
+# 확률과 확률분포
 ## 1. 확률의 개념과 특징
 - 통계학 : 데이터에 담겨진 표면적인 정보를 정확히 요약하고 그 내면에 담긴 의미를 추록하고 해석하기 위한 도구적인 성격의 학문
 - 모수 : 알고자 하는 미지의 정보 (어느 후보의 지지율, 불량률 등) -> 데이터를 활용해 예측
@@ -228,3 +229,95 @@ X~F[k1, k2]인 경우
 X~F[k1, k2]일 때, P[X > c] = a를 만족하는 X의 (1-a)분위수 c
 ![Alt text](/reference_statistics/image-32.png)
 
+# 탐색적 데이터분석
+## 7. 그래프에 의한 기술통계
+- 질적 자료(값이 문자나 성질로 표현 예. 성별, 혈액형 등)
+    - 1개 변수 : 바차트(막대그림), 파이차트\
+    ![Alt text](/reference_statistics/image-33.png)
+    - 2개 변수 : 히트맵, 스택드컬럼차트\
+        - 스택트컬럼차트
+        ![Alt text](/reference_statistics/image-34.png)\
+        - 히트맵
+        ![Alt text](/reference_statistics/image-35.png)
+    
+- 양적 자료(값이 숫자로 표현 예. 나이 등)
+    - 1개 변수 : 히스토그램, 박스플롯(상자그림), 라인차트, QQ플롯\
+        - 히스토그램(가로축 실수) : 막대그래프(가로축 항목)과의 차이점
+        ![Alt text](/reference_statistics/image-36.png)
+        - 박스플롯(상자그램)
+        ![Alt text](/reference_statistics/image-37.png)
+        - QQ플롯 : 정규분포에 가까울수록 선형에 가깝다
+        ![Alt text](/reference_statistics/image-38.png)
+        ![Alt text](/reference_statistics/image-39.png)
+        ![Alt text](/reference_statistics/image-40.png)
+
+    - 2개 변수 : 산점도
+    ![Alt text](/reference_statistics/image-41.png)
+
+
+## 8. 위치, 변이, 모양 통계량
+#### 중심 위치 척도
+- 평균 : 표본 자료 x1, ..., xn이 주어졌을 때,\
+x = (x1 + x2 + ... + xn) / n
+
+- 중위수, 중앙값 : 표본 자료 x1, ..., xn을 오름차순 정렬하였을 때,\
+x_med \
+= (n+1)/2번째 자료 (n이 홀수)\
+= n/2번째와 (n/2)+1번째 자료 (n이 짝수)
+
+- 최빈값 : 가장 빈도가 높은 값 또는 구간
+
+![Alt text](/reference_statistics/image-43.png)
+
+#### 상대적 위치 척도
+- 사분위수 : Q1, Q2, Q3
+    - Q1(=x_(n+1)/4) : 25%, 1사분위수
+    - Q2(=x_(n+1)/2) : 50%, 2사분위수
+    - Q3(=x_3(n+1)/4) : 75%, 3사분위수
+
+#### 변동성 척도
+- 범위 : 표본 자료 x1, ..., xn이 주어졌을 때,\
+max(xi) - min(xi)
+
+- 사분위간 범위 : Q3 - Q1
+
+- 표본 분산 : 표본 자료 x1, ..., xn이 주어졌을 때,\
+![Alt text](/reference_statistics/image-44.png)
+
+- 표본 표준 편차 : \
+S = 표본분산의 제곱근
+
+- 변동계수 : 평균대비 표준편차\
+스케일의 차이가 클 때, 자료의 단위가 다를 때 사용\
+cv = s / 평균
+
+#### 형태 척도
+- 왜도 : 분포의 비대칭 정도를 나타내는 척도
+- 첨도 : 분포의 중심에서 뾰족함 정도를 나타내는 척도
+![Alt text](/reference_statistics/image-45.png)
+
+
+## 9. 연관성
+#### 선형적 연관성
+- 선형적 연관성의 방향
+![Alt text](/reference_statistics/image-46.png)
+
+- 선형적 연관성의 강도
+![Alt text](/reference_statistics/image-47.png)
+
+- 표본 공분산 : n쌍의 표본자료 (x1, y1), ..., (xn, yn)이 주어졌을 때,\
+sxy = {(x1 - x평균)(y1 - y평균) + ... + (xn - x평균)(yn - y평균)} / (n-1)
+
+    - 선형관계의 방향
+        - sxy > 0 : 양의 선형 관계, 비례관계
+        - sxy < 0 : 음의 선형 관계, 반비례관계
+
+    - 선형관계의 강도
+        - -sx sy <= sxy <= sx sy (by Cauchy-Schwarz부등식)
+        - 표본공분산은 x와 y의 측정 단위에 의존하는 지표\
+        x' = ax + b이고, y' = cy + d인 경우에 sx'y' = ac * sxy
+
+
+
+# 추정과 검정
+## 10. 통계적 추론 개요, 표본추출법
