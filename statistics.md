@@ -630,3 +630,14 @@ SST = SSA + SSB + SSAB + SSE\
     p-value <= a면 H0를 기각
     - 분산분석표
     ![Alt text](/reference_statistics/image-88.png)
+
+
+## 18. 모분산 비교에 관한 가설검정(F-test of equality of variances)
+#### 두 모집단의 모분산 차이
+- 독립인 두 표본
+![Alt text](/reference_statistics/image-89.png)
+
+- 가설 유형 : 관심모수가 시그마1^2 / 시그마2^2 이고 검정하고자 하는 모수의 경계값은 1이 됨
+![Alt text](/reference_statistics/image-90.png)
+- 검정통계량 : 두 모집단이 모두 정규분포인 경우 다음의 검정통계량 X는 귀무가설 H0(시그마1^2 / 시그마2^2 = 1)이 사실일 때\
+X = 1 * (s1^2 / s2^2) ~F[n1 - 1, n2 - 1]
